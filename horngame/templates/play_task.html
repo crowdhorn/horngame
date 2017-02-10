@@ -1,0 +1,123 @@
+{% extends "layout.html" %} {% block body %}
+<style>
+    /*
+     * Custom keyword styles
+     */
+    {% for pred in task.preds %}
+    .token.keyword.keyword-{{ pred.name }} {
+        color: #f92672;
+    }
+    {% endfor %}
+    </style>
+<div class="play-wrapper">
+    <div class="content">
+        <h1 class="content-head is-center">Task {{ task.text_name }}.</h1>
+        <h2 class="content-head is-center">(difficulty {{ task.clauses|length }})</h2>
+
+        {% if previous|length > 0 %}
+        <div class="previous is-center">
+        <h3 class="content-head">You solved this task. Congratulations! 🙌</h3>
+        </div>
+        {% endif %}
+
+        {% if error|length > 0 %}
+        <div class="error is-center">
+        <h3 class="content-head">Error.</h3>
+        {% for clause in error %}
+            Clause #{{ loop.index }} is {% if clause == 0 %}<span class="false">False</span>{% elif clause == 1 %}<span class="true">True</span>{% elif clause == -1 %}<span class="timeout">Timeout</span>{% endif %}
+        {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if texterror %}
+        <div class="error is-center">
+        <h3 class="content-head">Error.</h3>
+        {{ texterror | safe }}
+        </div>
+        {% endif %}
+
+
+        <div class="pure-g">
+            <div class="pure-u-1 pure-u-md-1-2">
+                <h2 class="content-head is-center">Clause{% if task.clauses|length > 1 %}s{% endif %}.</h2>
+<pre class="language-horn"><code>{% for clause in task.clauses %}{{ clause }}{% if loop.index < task.clauses|length %}
+{% endif %}
+{% endfor %}</code></pre>
+            </div>
+            <div class="pure-u-1 pure-u-md-1-2">
+                <h2 class="content-head is-center">Edit the predicate{% if task.preds|length > 1 %}s{% endif %} to make the clause{% if task.clauses|length > 1 %}s{% endif %} true:</h2>
+                <form class="pure-form pure-form-stacked" action="{{ url_for('play_task',tid=task.task_id) }}" method="post" onsubmit="onSubmit();">
+                    <fieldset>
+                        {% for pred in task.preds %}
+                        <label for="{{pred.name}}_textarea">{{ pred.name }}({% for arg in pred.args %}{{ arg }}{% if loop.index
+                            < pred.args|length %}, {% endif %}{% endfor %}) =</label>
+                                {% if previous|length == 0 %}
+                                <textarea id="{{pred.name}}_textarea" class="pure-input-1 language-horn">{{ pred.assignment }}</textarea>
+                                <input hidden id="{{pred.name}}" name="{{pred.name}}">
+                                {% else %}
+                                <pre class="language-horn"><code>{{ previous[loop.index0].assignment }}</code></pre>
+                                {% endif %}
+                                {% endfor %}
+                                
+                                {% if previous|length == 0 %}
+                                <div class="is-center">
+                                    <button type="submit" class="pure-button">Submit</button>
+                                </div>
+                                {% endif %}
+                    </fieldset>
+                </form>
+            </div>
+            <div class="pure-u-1">
+                <h2 class="content-head is-center">History.</h2> {% if history|length > 0 %}
+                <h3 class="content-head is-center">{{history|length}} user{% if history|length > 1 %}s{% endif %} solved this task already :)</h3>
+                <div class="content top-players">
+                    <table class="pure-table pure-table-horizontal">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Username</th>
+                                <th>Date</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in history %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ row.username }}</td>
+                                <td>{{ row.submitDate }} UTC</td>
+                                <td>{{ row.duration }} seconds</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <h3 class="content-head is-center">Nobody solved this task yet.</h3> {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="{{ url_for('static', filename='prism.js') }}"></script>
+<script style="text/javascript">
+// Add predicates names as keywords
+! function() {
+    Prism.languages.horn['keyword'] = /\b(Bool|int{% for pred in task.preds %}|{{ pred.name }}{% endfor %})\b/;
+}();
+
+// modify all the textarea to be editable and highlighted
+var editors = document.querySelectorAll('textarea');
+editors.forEach(function(editor) {
+    editor = bililiteRange.fancyText(editor, Prism.highlightElement);
+});
+
+// on submit, fill the hidden input fields
+function onSubmit() {
+    {% for pred in task.preds %}
+    var x{{ loop.index }} = document.getElementById('{{pred.name}}_textarea').textContent;
+    document.getElementById('{{pred.name}}').value = x{{ loop.index }}; 
+    {% endfor %}
+}
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="solutions-wrapper">
+<div class="content">
+    <h2 class="content-head is-center">Problems solved.</h2>
+    
+    {% for s in solved %}
+    <h4 class="content-head">{{ s.pid }}</h4>
+
+    <pre class="language-json"><code>{{ s.task }}
+    </code>
+
+    {% endfor %}
+</div>
+</div>
+<script src="{{ url_for('static', filename='prism.js') }}"></script>
+{% endblock %}

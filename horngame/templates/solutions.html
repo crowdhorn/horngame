@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="solutions-wrapper">
+<div class="content">
+    <h2 class="content-head is-center">Solutions.</h2>
+    
+    <pre class="language-json"><code>
+{% for solution in solutions %}
+{{ solution.json }}
+{% endfor %}
+    </code>
+    </pre>
+
+    <h2 class="content-head is-center">At least one timeout and one success.</h2>
+
+    <pre class="language-json"><code>
+{% for timeout in timeouts %}
+{{ timeout.json }}
+{% endfor %}
+    </code>
+    </pre>
+
+    <h2 class="content-head is-center">Fails.</h2>
+
+    <pre class="language-json"><code>
+{% for fail in fails %}
+{{ fail.json }}
+{% endfor %}
+    </code>
+    </pre>
+    
+</div>
+</div>
+<script src="{{ url_for('static', filename='prism.js') }}"></script>
+{% endblock %}

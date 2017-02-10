@@ -1,0 +1,7 @@
+tmp_smt2
+.gitignore
+.travis.yml
+LICENSE
+Makefile
+problem_import.py
+README.md

@@ -1,0 +1,4 @@
+graft horngame/templates
+graft horngame/static
+include horngame/schema.sql
+include horngame/populate.sql

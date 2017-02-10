@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="login-wrapper">
+<div class="content">
+    <h2 class="content-head is-center">Log in or Sign up.</h2>
+    {% if error %}
+    <div class="error is-center"><h3 class="content-head">{{ error }}</h3></div>
+    {% endif %}
+    <form class="pure-form pure-form-stacked" action="{{ url_for('login') }}" method="post">
+        <fieldset>
+            <label for="username">Your Username</label>
+            <input type="text" placeholder="Your Username" name="username" value="{{ username }}">
+            <label for="password">Your Password</label>
+            <input name="password" type="password" placeholder="Your Secure Password">
+            <button type="submit" class="pure-button" name="login">Log in</button> <button type="submit" class="pure-button" name="signup">Sign up</button>
+        </fieldset>
+    </form>
+</div>
+</div>
+{% endblock %}

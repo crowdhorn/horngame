@@ -1,0 +1,7 @@
+flask
+subprocess32
+haikunator
+subprocess32
+pyparsing
+sh
+logging

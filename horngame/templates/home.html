@@ -1,0 +1,62 @@
+{% extends "layout.html" %} {% block body %}
+
+<div class="content-wrapper">
+    <div class="content-head is-center">
+      <img class="img-responsive" style="margin: 0 auto;" src="static/img/logo500white.png" alt="" >
+      <h2 class="is-center">Can you make these Horn clauses valid?</h2>      
+    <hr class="star-light">
+    <p>
+        <a href="/play" class="pure-button pure-button-primary">Get Started!</a>
+    </p>
+    </div>
+    
+
+    <div class="content">
+        <h2 class="content-head is-center">Statistics.</h2>
+        <div class="pure-g">
+            <div class="l-box is-center l-box-1 pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <p>{{ ntasks }}</p>
+                <p>tasks</p>
+            </div>
+            <div class="l-box is-center l-box-3 pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <p>{{ nsolutions }}</p>
+                <p>solutions</p>
+            </div>
+            <div class="l-box is-center l-box-1 pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <p>{{ nproblems }}</p>
+                <p>problems</p>
+            </div>
+            <div class="l-box is-center l-box-2 pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
+                <p>{{ nproblemssolved }}</p>
+                <p>problems solved</p>
+            </div>
+        </div>
+    </div>
+    <div class="content top-players">
+        <h2 class="content-head is-center">Top Players.</h2>
+        <table class="pure-table pure-table-horizontal">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Tasks solved</th>
+                    <th>Errors</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.nsolved }}</td>
+                    <td>{{ user.nerrors }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="footer l-box is-center">
+        Let's enjoy Africa.
+    </div>
+</div>
+{% endblock %}

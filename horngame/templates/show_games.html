@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+    <form action="{{ url_for('add_game') }}" method="post" class="add-game">
+      <dl>
+        <dt>Title:
+        <dd><input type="text" size="30" name="title">
+        <dt>Clauses:
+        <dd><textarea name="clauses" rows="5" cols="40"></textarea>
+        <dt>Pred &amp; Assign:
+        <dd><textarea name="pred_assign" rows="5" cols="40"></textarea>
+        <dd><input type="submit" value="Share">
+      </dl>
+    </form>
+  {% endif %}
+  <ul class="games">
+  {% for game in games %}
+    <li><h2>{{ game.title }}</h2><h4>{{ game.clauses|safe }}</h4><h5>{{ game.pred_assign|safe }}</h5></li>
+  {% else %}
+    <li><em>Unbelievable.  No games here so far</em></li>
+  {% endfor %}
+  </ul>
+{% endblock %}
