@@ -56,7 +56,9 @@ def home():
 def clean_clauses(task):
     t = task.copy()
     for i in range(len(t['clauses'])):
-        t['clauses'][i] = t['clauses'][i].split('; ')[-1]
+        clause_split = t['clauses'][i].split('; ')
+        index = sum(1 if c.startswith('\\forall') else 0 for c in clause_split)
+        t['clauses'][i] = '; '.join(clause_split[index:])
     return t
 
 @app.route('/play')
