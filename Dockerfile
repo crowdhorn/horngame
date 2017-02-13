@@ -1,27 +1,40 @@
 FROM python:2.7-slim
 MAINTAINER Tancrède Lepoint "tancrede.lepoint@sri.com"
 
-RUN echo "deb http://ftp.de.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
+#
+# Install openjdk-8 on Debian Jessie
+#
+RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list
 RUN apt-get -y update 
-RUN apt-get install -y wget unzip openjdk-8-jdk ant gcc
+RUN apt-get -y -t jessie-backports install "openjdk-8-jre"
 
-RUN mkdir /scala
-WORKDIR /scala
-RUN wget www.scala-lang.org/files/archive/scala-2.11.8.deb
+#
+# Install wget, unzip and gcc (gcc is required by subprocess32)
+#
+RUN apt-get install -y wget unzip gcc
+
+#
+# Install scala 2.11.8
+#
+WORKDIR /tmp
+RUN wget -q www.scala-lang.org/files/archive/scala-2.11.8.deb
 RUN dpkg -i scala-2.11.8.deb
 ENV SCALA_HOME /usr/share/scala
 ENV PATH /usr/share/scala/bin:$PATH
 
+#
+# Install eldarica in /eldarica
+#
 RUN mkdir /eldarica
 WORKDIR /eldarica
-RUN wget https://github.com/jayhorn/eldarica/releases/download/hgame0.4/eldarica.zip
+RUN wget -q https://github.com/jayhorn/eldarica/releases/download/hgame0.4/eldarica.zip
 RUN unzip eldarica.zip 
 ENV ELDARICA_PATH /eldarica
 
+#
+# Install the flask app
+#
 WORKDIR /app
-
-ENV FLASK_APP horngame
-ENV FLASK_DEBUG 1
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
@@ -29,6 +42,8 @@ RUN pip install -r requirements.txt
 COPY . .
 RUN pip install --editable .
 
+ENV FLASK_APP horngame
+ENV FLASK_DEBUG 1
 RUN flask initdb
 RUN flask populatedb 
 
