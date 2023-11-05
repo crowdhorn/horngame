@@ -5,18 +5,21 @@ import subprocess32 as subprocess
 from contextlib import contextmanager
 import logging
 
+os.environ['ELDARICA_PATH'] = os.path.join(os.getcwd(), "eldarica")
 
 sys.path.append("./horngame/tool")
 import problems
 import common
 
-horn_repos = [ {"url":"git@github.com:crowdhorn/demo_clauses.git", "folders":["demo_clauses/handwritten"]},
-               {"url":"git@github.com:crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/clauses/ALIA/dillig"]},
-               {"url":"git@github.com:crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/clauses/LIA/Eldarica/RECUR"]},
-               {"url":"git@github.com:crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/clauses/QALIA"]}
-             ]
+horn_repos = [ 
+  # {"url":"https://github.com/crowdhorn/demo_clauses.git", "folders":["demo_clauses/handwritten"]},
+  # {"url":"https://github.com/crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/comp"]},
+  {"url":"https://github.com/crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/clauses/ALIA/dillig"]},
+  {"url":"https://github.com/crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/clauses/LIA/Eldarica/RECUR"]},
+  {"url":"https://github.com/crowdhorn/sv-benchmarks.git", "folders":["sv-benchmarks/clauses/QALIA"]}
+]
 
-# horn_repos = [{"url":"git@github.com:crowdhorn/demo_clauses.git", "folders":["demo_clauses/handwritten"]}]
+# horn_repos = [{"url":"git@github.com:crowdhorn/demo_clauses.git", "folders":["demo_clauses/demo"]}]
 
 def bulk_import_smt_files():
   formatter = logging.Formatter('%(levelname)s - %(message)s')
@@ -83,7 +86,8 @@ def run_cmd(cmd, print_output=False, timeout=None):
       timer = Timer(timeout, kill_proc, [process, stats])
       timer.start()
 
-    for line in iter(process.stdout.readline, b''):
+    for byte_line in iter(process.stdout.readline, b''):
+      line = byte_line.decode('utf-8') 
       stats['output'] = stats['output'] + line
       if print_output:
         sys.stdout.write(line)

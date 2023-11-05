@@ -19,7 +19,7 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'horngame.db'),
     DEBUG=True,
     SECRET_KEY='this is the horngame secret key that is super secret and super key',
-    LOGGING_LEVEL=logging.DEBUG,
+    LOGGING_LEVEL=logging.INFO,
     LOGGING_FILE='horngame.log',
     LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 ))

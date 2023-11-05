@@ -1,0 +1,21 @@
+{
+    "problem_id": "255115ee77e568257f14d28512884654dd09b206f7e266f3013dd4bd",
+    "preds": [
+      {
+        "name": "IsOdd",
+        "args": [
+          "v0",
+          "v1"
+        ],
+        "assignment": "v0 >= 0 & 1 >= v1 & v1 >= 0"
+      }
+    ],
+    "clauses": [
+      "IsOdd(1, 1)",
+      "\\forall int v0, v1; ((IsOdd(v0, v1) & v0 != -2 & v0 != -1 & v0 != 0) -> IsOdd(v0 + 2, v1))",
+      "\\forall int v0, v1; !(IsOdd(v0, v1) & (v1 = 1 -> \\exists int v2; 2*v2 + v0 = 0) & (v1 = 0 -> \\exists int v2; 2*v2 + v0 = -1))"
+    ],
+    "task_id": "7172349fe5542f427eea47956e75e00ad1440baca9508ed2b09f0804",
+    "smt_file": "static/smt_files/smt_255115ee77e568257f14d28512884654dd09b206f7e266f3013dd4bd.smt2",
+    "text_name": "frosty recipe"
+  }

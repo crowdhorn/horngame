@@ -50,7 +50,7 @@ def check_solution(solution, sol_dir):
       create_princess_file(sol_dir, solution, [clause], pri_file)
       pri_file.flush()
       output = run_cmd([princess_command, "-timeout=1000", "-clausifier=simple", pri_file.name])
-    log.info("Output of princess: %s", str(output))
+    # log.info("Output of princess: %s", str(output))
     valid_clauses += [0]
     if parse_princess_output(output) == True:
       valid_clauses[-1] = 1
@@ -66,7 +66,7 @@ def parse_princess_output(output):
       if line.rstrip() == "VALID":
         return True
       elif line.rstrip().startswith("ERROR"):
-        raise SyntaxError, line
+        raise SyntaxError(line)
   return False
 
 def create_princess_tautology_check(solution):
@@ -109,7 +109,7 @@ def create_princess_tautology_check(solution):
       pri_file.flush()
       output = run_cmd([princess_command, "-timeout=1000", "-clausifier=simple", pri_file.name])
     if parse_princess_output(output):
-      raise InconsistentPredicateException, pred["name"]
+      raise InconsistentPredicateException(pred["name"])
 
  
 
@@ -243,5 +243,5 @@ if __name__ == "__main__":
   if not os.path.isdir(sys.argv[1]):
     print("Json dir not a directory: {}".format(sys.argv[1]))
     sys.exit()
-  print check_solution(make_test_solution(), sys.argv[1])
+  print(check_solution(make_test_solution(), sys.argv[1]))
   

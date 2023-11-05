@@ -174,7 +174,7 @@ def create_tasks(eldarica_output, problem):
   task[clauses_key] += relevant_clauses
   for clause in subset:
     task[clauses_key].append(clause)
-  tid = h.sha224(str(task)).hexdigest()
+  tid = h.sha224(str(task).encode('utf-8')).hexdigest()
   task[task_id_key] = str(tid)      
   # compute the hash before setting the random name
   log.info("Checking satisfiability of task.")
@@ -193,15 +193,16 @@ def create_tasks(eldarica_output, problem):
 def create_problem_hash(eldarica_output):
   hash_string = "\n".join(eldarica_output[instantiated_clause_key])
   hash_string += eldarica_output[predicate_key]
-  return h.sha224(hash_string).hexdigest()
+  return h.sha224(hash_string.encode('utf-8')).hexdigest()
 
 def check_smt_file(smt_file, out_dir, timeout=5, hint_file=None, problem=None, generate=True):
   global TOTAL_PROBLEM, TOTAL_TASK
   cmd = [eldarica_command, smt_file, "-rt:{}".format(timeout), "-ssol"]
   if hint_file:
-    cmd+=["-hints:{}".format(hint_file)]    
+    cmd+=["-hints:{}".format(hint_file)]
+  log.info("Calling Eldarica: %s", " ".join(cmd))
   stats = run_cmd(cmd)
-  eldarica_output = dict()
+  eldarica_output = None
   if stats and not stats['timed_out']:
     eldarica_output = parse_output(stats["output"])
   generated_tasks = 0
@@ -210,6 +211,7 @@ def check_smt_file(smt_file, out_dir, timeout=5, hint_file=None, problem=None, g
     if eldarica_output: 
 
       if "solved" in eldarica_output:
+        log.info("Problem solved: {}", eldarica_output)
         if problem !=None:
           return problem[problem_id_key], True, 0
         else:
@@ -277,13 +279,12 @@ def check_smt_file(smt_file, out_dir, timeout=5, hint_file=None, problem=None, g
   except Exception as e:
     log.error("Failed. %s", str(e))
     traceback.print_exc(file=sys.stdout)
-    log.error(eldarica_output)
 
   if problem:
     return problem[problem_id_key], False, generated_tasks
   return "0", False, 0
 
-def generate_problem_file(smt_file_list, out_dir, timeout=10, hint_file=None):
+def generate_problem_file(smt_file_list, out_dir, timeout=2, hint_file=None):
   global TOTAL_PROBLEM, TOTAL_TASK, TOTAL_NO_TASK
   
   if not os.path.exists(out_dir):

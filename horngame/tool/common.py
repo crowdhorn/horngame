@@ -15,10 +15,10 @@ log.addHandler(handler)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler = logging.FileHandler('/tmp/horngame.tool.log')
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.INFO)
 handler.setFormatter(formatter)
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 log.addHandler(handler)
 
 #name of subfolder in app/static
@@ -109,8 +109,7 @@ def run_cmd(cmd, print_output=False, timeout=None):
            'output': ''}
   timer = None
 
-  if print_output:
-    print ("Running %s" % ' '.join(cmd))
+  if print_output:    
     log.info("Running %s", ' '.join(cmd))
   try:
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -119,7 +118,8 @@ def run_cmd(cmd, print_output=False, timeout=None):
       timer = Timer(timeout, kill_proc, [process, stats])
       timer.start()
 
-    for line in iter(process.stdout.readline, b''):
+    for byte_line in iter(process.stdout.readline, b''):
+      line = byte_line.decode('utf-8')
       stats['output'] = stats['output'] + line
       if print_output:
         log.info(line)
@@ -130,7 +130,8 @@ def run_cmd(cmd, print_output=False, timeout=None):
     stats['return_code'] = process.returncode
     if timer:
       timer.cancel()
-
+  except KeyboardInterrupt:
+    raise
   except:
     log.error("calling %s failed\n%s",' '.join(cmd),traceback.format_exc())
     print ('calling {cmd} failed\n{trace}'.format(cmd=' '.join(cmd),trace=traceback.format_exc()))
